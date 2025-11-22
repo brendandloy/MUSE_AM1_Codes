@@ -4,6 +4,7 @@ from Math_tools import Newton
 def Euler(U1, t1, t2, F):
 
     dt = t2 - t1
+    
     return U1 + dt*F(U1, t1)
 
 

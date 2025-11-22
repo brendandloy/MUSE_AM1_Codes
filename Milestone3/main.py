@@ -1,8 +1,12 @@
-from numpy import linspace, concatenate
+"""
+Poner API
+"""
+
+from numpy import linspace, concatenate, array
 from numpy.linalg import norm
-from Cauchy import Cauchy_problem
-from Error import Cauchy_error
-from Temporal_schemes import *
+from Cauchy import Cauchy_error
+from Temporal_schemes import Euler, CrankNicolson
+from Convergence_and_Stability import convergence_rate
 import matplotlib.pyplot as plt
 
 
@@ -10,7 +14,19 @@ def F(U, t):
 
     r = U[0:2]
     rdot = U[2:4]
+
     return concatenate((rdot, -r/norm(r)**3), axis=None)
+
+
+def Oscilador(U, t):
+    """
+    d2x/dt2 + x = 0
+    """
+
+    x = U[0]
+    xdot = U[1]
+
+    return array((xdot, -x))
 
 
 def test_Error():
@@ -42,4 +58,25 @@ def test_Error():
     plt.show()
 
 
-test_Error()
+def test_convergence():
+
+    U0 = ([1, 0])
+    T = 20
+    N = 10000
+    t = linspace(0, T, N+1)
+
+    logN, logE, q, E = convergence_rate(Euler, Oscilador, U0, t)
+
+    print(f"The order of the temporal scheme is: {q}")
+
+    # Plot trajectory
+    plt.plot(logN, logE)
+    plt.xlabel('logN')
+    plt.ylabel('logE')
+    plt.title('Order of the temporal scheme')
+    plt.axis('equal')
+    plt.grid(True)
+    plt.show()   
+
+
+test_convergence()

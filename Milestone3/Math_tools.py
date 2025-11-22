@@ -3,9 +3,10 @@ from numpy.linalg import norm
 from scipy.linalg import solve
 
 
-def derivative(f, x, r):
-
-    h = 1e-7
+def derivative(f, x, r, h=1e-7):
+    """
+    The tolerance "h" is optional. By default, h=1e-7
+    """
 
     return (f(x + r*h) - f(x - r*h)) / (2 * h)
 
