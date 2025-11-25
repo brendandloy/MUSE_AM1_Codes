@@ -60,6 +60,8 @@ def test_Error():
 
 def test_convergence():
 
+    # Me dan valores de q raros, no sé si está bien
+
     U0 = ([1, 0])
     T = 20
     N = 10000
