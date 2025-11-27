@@ -2,7 +2,7 @@
 Poner API
 """
 
-from numpy import linspace, concatenate, array
+from numpy import linspace, concatenate, array, pi
 from numpy.linalg import norm
 from Cauchy import Cauchy_error
 from Temporal_schemes import Euler, CrankNicolson, RungeKutta4, Inverse_Euler
@@ -58,18 +58,16 @@ def test_Error():
     plt.show()
 
 
-def test_convergence():
-
-    # Me dan valores de q raros, no sé si está bien
+def test_convergence():    
 
     U0 = ([1, 0])
-    T = 20
-    N = 10000
+    T = 8*pi
+    N = 1000
     t = linspace(0, T, N+1)
 
-    logN, logE, q, E = convergence_rate(RungeKutta4, Oscilador, U0, t)
+    logN, logE, q = convergence_rate(Inverse_Euler, Oscilador, U0, t)
 
-    print(f"The order of the temporal scheme is: {q}")
+    print(f"The order of the temporal scheme is: {q}")    
 
     # Plot trajectory
     plt.plot(logN, logE)
@@ -81,4 +79,4 @@ def test_convergence():
     plt.show()   
 
 
-test_Error()
+test_convergence()

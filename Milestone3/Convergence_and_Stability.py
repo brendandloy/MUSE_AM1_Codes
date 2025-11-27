@@ -1,37 +1,49 @@
-from numpy import zeros, linspace, arange, log
+from numpy import zeros, linspace, arange, log10, polyfit
 from numpy.linalg import norm
 from Cauchy import Cauchy_error
-from scipy.stats import linregress 
+
+def refine_mesh(t1):
+    """
+    Ejemplo: t1 = [0, 1, 2] --> t2 = [0, 0.5, 1, 1.5, 2]
+    """
+    N = len(t1) - 1  
+
+    t2 = zeros(2*N+1) 
+    for i in range(0, N): 
+        t2[2*i] = t1[i]
+        t2[2*i+1] = (t1[i] + t1[i+1])/2 
+    
+    t2[2*N] = t1[N]      
+
+    return t2
 
 
 def convergence_rate(Temporal_scheme, F, U0, t):
     
-    N_mesh = arange(10, 3001, 10)    
-    N_meshes = len(N_mesh)
-    N = len(t) - 1
+    N_meshes = 8          
 
-    E = zeros(N_meshes)
+    logN = zeros(N_meshes)
+    logE = zeros(N_meshes) 
 
-    for n in range(N_meshes):
-        t_n = linspace(t[0], t[N], N_mesh[n])
-        # La primera q puede ser cualquiera, despues se recalcula log(E)
-        U1, E_n = Cauchy_error(F, U0, t_n, Temporal_scheme) 
-        E[n] = norm(E_n)
+    t_i = t
+    for i in range(N_meshes):
+        N = len(t_i) - 1
+        U, E = Cauchy_error(F, U0, t_i, Temporal_scheme) # Cualquier q, por defecto q = 1
 
+        logN[i] = log10(N)
+        logE[i] = log10(norm(E[N, :])) # Norma del punto con mas error (el ultimo)
+        
+        # Se refina la malla para la siguiente iteracion
+        t_i = refine_mesh(t_i)       
 
-    logN = log(N_mesh)
-    logE = log(E)
+    y = logE[logE > -12]
+    x = logN[0:len(y)]
+    m, b = polyfit(x, y, 1)    
+    q = -m
 
-    q = abs(linregress(logN, logE).slope)
+    # Se recalcula logE una vez obtenido el orden
+    logE = logE - log10(1 - 1/2**abs(q))   
 
-    for n in range(N_meshes):
-        t_n = linspace(t[0], t[N], N_mesh[n])
-        U1, E_n = Cauchy_error(F, U0, t_n, Temporal_scheme, q)
-        E[n] = norm(E_n)
-
-    logN = log(N_mesh)
-    logE = log(E)
-
-    return logN, logE, q, E
+    return logN, logE, q
 
 
