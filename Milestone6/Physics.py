@@ -50,8 +50,8 @@ def CR3BP(U, t, mu):
     
     mu = m2/(m1 + m2)
     1 - mu = m1/(m1 + m2)
-    """
-
+    """ 
+    
     x, y, z = U[0:3]
     xdot, ydot, zdot = U[3:6]
 

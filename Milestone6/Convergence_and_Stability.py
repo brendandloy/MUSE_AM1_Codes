@@ -22,7 +22,7 @@ def refine_mesh(t1):
 
 def convergence_rate(Temporal_scheme, F, U0, t):
     
-    N_meshes = 8          
+    N_meshes = 10        
 
     logN = zeros(N_meshes)
     logE = zeros(N_meshes) 
@@ -38,7 +38,7 @@ def convergence_rate(Temporal_scheme, F, U0, t):
         # Se refina la malla para la siguiente iteracion
         t_i = refine_mesh(t_i)       
 
-    y = logE[logE > -12]
+    y = logE[(logE > -11) & (logE < -3)]
     x = logN[0:len(y)]
     m, b = polyfit(x, y, 1)    
     q = -m
@@ -49,7 +49,7 @@ def convergence_rate(Temporal_scheme, F, U0, t):
     return logN, logE, q
 
 
-def stability_region(Temporal_scheme, x0=-4, xf=2, y0=-4, yf=4, Np=100):
+def stability_region(Temporal_scheme, x0=-6, xf=3, y0=-6, yf=6, Np=100):
     """
     Ver GitHub de Juan A. Hernandez
 
